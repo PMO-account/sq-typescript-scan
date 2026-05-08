@@ -27,5 +27,5 @@ jobs:
           url: 'https://sonarqube.saas-preprod.beescloud.com'
           username: ${{ secrets.SONARQUBE_USERNAME }}
           password: ${{ secrets.SONARQUBE_PASSWORD }}
-          ref: main
+          ref: main 
           
