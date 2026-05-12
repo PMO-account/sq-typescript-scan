@@ -17,20 +17,22 @@ class MyEc2Setup extends Construct {
       instanceName: 'test-instance',
     });
 
+    const trustedAdminCidr = ec2.Peer.ipv4('10.0.0.0/16');
+
     instance.connections.allowFrom(
-      ec2.Peer.anyIpv4(), // Noncompliant: allows from any IPv4
+      trustedAdminCidr,
       ec2.Port.tcp(22),
-      'Allows SSH from all IPv4'
+      'Allows SSH from trusted admin network only'
     );
 
-    // Security group with overly broad ingress
     const securityGroup = new ec2.SecurityGroup(this, 'custom-security-group', {
       vpc: vpc,
     });
 
     securityGroup.addIngressRule(
-      ec2.Peer.anyIpv4(), // Noncompliant: overly broad access
-      ec2.Port.tcpRange(1, 1024)
+      trustedAdminCidr,
+      ec2.Port.tcpRange(1, 1024),
+      'Allows admin port range from trusted admin network only'
     );
   }
 }
