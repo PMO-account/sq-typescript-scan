@@ -9,10 +9,6 @@ app.use(express.urlencoded({ extended: true }));
 app.post(
   '/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
-  function (req, res) {
-    // Noncompliant - no session.regenerate after login
-    res.redirect('/');
-  }
 );
 
 export default app;
