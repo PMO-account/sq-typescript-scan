@@ -5,13 +5,19 @@ const app = express();
 
 app.use(express.urlencoded({ extended: true }));
 
-// Noncompliant: missing req.session.regenerate() after login
 app.post(
   '/login',
   passport.authenticate('local', { failureRedirect: '/login' }),
-  function (req, res) {
-    // Noncompliant - no session.regenerate after login
-    res.redirect('/');
+  function (req, res, next) {
+    const user = req.session.passport?.user;
+    req.session.regenerate((err) => {
+      if (err) return next(err);
+      req.session.passport = { user };
+      req.session.save((saveErr) => {
+        if (saveErr) return next(saveErr);
+        res.redirect('/');
+      });
+    });
   }
 );
 
